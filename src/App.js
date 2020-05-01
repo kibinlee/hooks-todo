@@ -1,25 +1,54 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useReducer, useState } from "react";
 
+const initialState = {
+  toDos: [],
+};
+
+const ADD = "add";
+
+const reducer = (state, action) => {
+  switch (action.type) {
+    case ADD:
+      return { toDos: [...state.toDos, { text: action.payload }] };
+    default:
+      throw new Error();
+  }
+};
+//ff
 function App() {
+  const [state, dispatch] = useReducer(reducer, initialState);
+  const [newToDo, setNewToDo] = useState("");
+
+  const onSubmit = (e) => {
+    e.preventDefault();
+    dispatch({ type: ADD, payload: newToDo });
+  };
+
+  const onChange = (e) => {
+    const {
+      target: { value },
+    } = e;
+    setNewToDo(value);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <h1> Add to do </h1>
+      <form onSubmit={onSubmit}>
+        <input
+          value={newToDo}
+          type="text"
+          placeholder="Write todo"
+          onChange={onChange}
+        />
+      </form>
+      <ul>
+        <h2>To Do</h2>
+        {state.toDos.map((toDo, index) => (
+          <li key={index}>{toDo.text}</li>
+        ))}
+      </ul>
+    </>
   );
 }
 
